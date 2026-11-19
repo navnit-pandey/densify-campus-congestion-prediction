@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AETHER Campus Crowd Density & Congestion Prediction System</title>
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons for Rich Aesthetics -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Chart.js for High-Performance Visual Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Application Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Top System Header & Telemetry Bar -->
+    <header class="top-header">
+      <div class="header-inner">
+        <div class="brand-section">
+          <div class="brand-logo-glow">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+          <div class="brand-info">
+            <h1>AETHER CAMPUS DIGITAL TWIN</h1>
+            <div class="brand-sub-row">
+              <span class="status-badge-live" id="appDataSourceBadge" title="Current Data State">
+                <span class="pulse-dot"></span> SIMULATION REPLAY (DEMO)
+              </span>
+              <span class="badge-source-info"><i class="fa-solid fa-database"></i> 90-Day Telemetry · Model Validated</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-Time Simulation Time Controller -->
+        <div class="sim-controls-bar">
+          <div class="time-readout">
+            <span class="label">Simulated Time</span>
+            <span class="clock-digits" id="clockDigits">13:00</span>
+          </div>
+          <div class="time-slider-wrap">
+            <i class="fa-regular fa-clock" style="color: var(--accent-cyan); font-size: 13px;"></i>
+            <input type="range" id="timeSlider" class="slider-input" min="0" max="23" value="13" step="1" aria-label="Simulated time of day in hours">
+          </div>
+          <div class="sim-buttons">
+            <button class="btn-icon" id="btnPlayPause" title="Play/Pause Simulation" aria-label="Play or pause simulation">
+              <i class="fa-solid fa-play" id="playIcon"></i>
+            </button>
+            <button class="btn-speed active" data-speed="1" aria-label="Simulation speed 1x">1x</button>
+            <button class="btn-speed" data-speed="5" aria-label="Simulation speed 5x">5x</button>
+            <button class="btn-speed" data-speed="10" aria-label="Simulation speed 10x">10x</button>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs">
+          <button class="tab-btn active" data-tab="tab-map">
+            <i class="fa-solid fa-map-location-dot"></i> Digital Twin Map
+          </button>
+          <button class="tab-btn" data-tab="tab-vision">
+            <i class="fa-solid fa-camera"></i> Vision AI & Video
+          </button>
+          <button class="tab-btn" data-tab="tab-forecast">
+            <i class="fa-solid fa-chart-line"></i> 24h ML Forecast
+          </button>
+          <button class="tab-btn" data-tab="tab-simulator">
+            <i class="fa-solid fa-sliders"></i> What-If Simulator
+          </button>
+          <button class="tab-btn" data-tab="tab-facilities">
+            <i class="fa-solid fa-building-columns"></i> Facilities & Energy
+          </button>
+          <button class="tab-btn" data-tab="tab-diagnostics">
+            <i class="fa-solid fa-microchip"></i> ML Diagnostics
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-wrapper">
+      
+      <!-- Top Real-Time KPI Cards Banner -->
+      <section class="kpi-grid">
+        <div class="kpi-card" id="kpiTotalHeadcount">
+          <div class="kpi-header">
+            <span class="kpi-title">Total Active Campus Crowd</span>
+            <span class="badge-source-tag primary"><i class="fa-solid fa-users"></i> Ground Truth</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="valTotalHeadcount">3,840</span>
+            <span class="kpi-sub">/ 8,000 Capacity</span>
+          </div>
+          <div class="kpi-footer">
+            <span class="badge-trend-up"><i class="fa-solid fa-arrow-trend-up"></i> +12%</span>
+            <span>vs previous hour</span>
+          </div>
+        </div>
+
+        <div class="kpi-card warning" id="kpiPeakZone">
+          <div class="kpi-header">
+            <span class="kpi-title">Peak Density Zone</span>
+            <span class="badge-source-tag primary"><i class="fa-solid fa-chart-simple"></i> Primary</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="valPeakZoneName">Block A</span>
+            <span class="kpi-sub" id="valPeakZonePct">77.9%</span>
+          </div>
+          <div class="kpi-footer" id="valPeakZoneDetail">
+            <span>High lecture interchange density</span>
+          </div>
+        </div>
+
+        <div class="kpi-card success" id="kpiEnergy">
+          <div class="kpi-header">
+            <span class="kpi-title">Campus Energy Draw</span>
+            <span class="badge-source-tag proxy"><i class="fa-solid fa-calculator"></i> Simulated Proxy</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="valEnergyDraw">286.4</span>
+            <span class="kpi-sub">kWh</span>
+          </div>
+          <div class="kpi-footer">
+            <span>Dynamic HVAC load active</span>
+          </div>
+        </div>
+
+        <div class="kpi-card success" id="kpiBottlenecks">
+          <div class="kpi-header">
+            <span class="kpi-title">Bottleneck Alerts</span>
+            <span class="badge-source-tag primary"><i class="fa-solid fa-bell"></i> Primary</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="valBottleneckCount">0</span>
+            <span class="kpi-sub">Severe Zones</span>
+          </div>
+          <div class="kpi-footer" id="valBottleneckFooter">
+            <span style="color: var(--accent-emerald);">Nominal campus flow</span>
+          </div>
+        </div>
+
+        <div class="kpi-card" id="kpiTransit">
+          <div class="kpi-header">
+            <span class="kpi-title">Transit Shuttle Headway</span>
+            <span class="badge-source-tag proxy"><i class="fa-solid fa-bus"></i> Queuing Model</span>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="valTransitWait">4.8</span>
+            <span class="kpi-sub">min avg wait</span>
+          </div>
+          <div class="kpi-footer">
+            <span>Bays 1-4 operating</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 1: DIGITAL TWIN CAMPUS MAP -->
+      <section class="tab-content active" id="tab-map">
+        <div class="map-view-layout">
+          
+          <!-- Map Canvas Container -->
+          <div class="map-container-panel">
+            <div class="panel-toolbar">
+              <div class="panel-title">
+                <i class="fa-solid fa-layer-group" style="color: var(--accent-cyan);"></i>
+                Campus Architectural Layout & Real-Time Density Heatmap
+                <span class="status-badge-sim" style="margin-left: 10px;"><i class="fa-solid fa-circle-nodes"></i> SIMULATED TELEMETRY REPLAY</span>
+              </div>
+              <div class="map-controls-group">
+                <button class="btn-toggle active" id="toggleHeatmap">
+                  <i class="fa-solid fa-fire-flame-curved"></i> Heatmap Glow
+                </button>
+                <button class="btn-toggle active" id="toggleParticles">
+                  <i class="fa-solid fa-people-arrows"></i> Foot-Traffic Particles
+                </button>
+                <button class="btn-toggle active" id="toggleLabels">
+                  <i class="fa-solid fa-tag"></i> Labels
+                </button>
+              </div>
+            </div>
+
+            <!-- Canvas Viewport -->
+            <div class="canvas-wrapper">
+              <canvas id="campusCanvas" role="img" aria-label="Campus architectural layout and crowd density heatmap">Interactive campus architectural layout and crowd density heatmap</canvas>
+              <div class="canvas-overlay-legend">
+                <div class="legend-item">
+                  <span class="legend-dot" style="background: #10b981; box-shadow: 0 0 6px #10b981;"></span>
+                  <span>Normal (&lt;45%)</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-dot" style="background: #f59e0b; box-shadow: 0 0 6px #f59e0b;"></span>
+                  <span>Moderate (45-70%)</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-dot" style="background: #f97316; box-shadow: 0 0 6px #f97316;"></span>
+                  <span>High (70-85%)</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-dot" style="background: #f43f5e; box-shadow: 0 0 8px #f43f5e;"></span>
+                  <span>Severe Bottleneck (&gt;85%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Zone Inspector Sidebar -->
+          <aside class="inspector-panel">
+            <div class="card-panel">
+              <div class="selected-zone-header">
+                <span class="zone-badge-type" id="inspectZoneCategory">LIBRARY</span>
+                <h3 class="selected-zone-name" id="inspectZoneName">Central Library</h3>
+                <p class="selected-zone-desc" id="inspectZoneDesc">Multi-floor research library with digital stacks, reading halls, and study pods.</p>
+              </div>
+
+              <!-- Meter Gauge -->
+              <div class="meter-group">
+                <div class="meter-header">
+                  <span style="color: var(--text-secondary); font-weight: 500;">Live Occupancy Rate</span>
+                  <span id="inspectOccupancyPct" style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-cyan);">44.7%</span>
+                </div>
+                <div class="meter-bar-track">
+                  <div class="meter-bar-fill" id="inspectMeterBar" style="width: 44.7%; background: var(--accent-emerald);"></div>
+                </div>
+              </div>
+
+              <!-- Telemetry Stats -->
+              <div class="zone-stats-grid">
+                <div class="mini-stat">
+                  <div class="stat-label">Live Headcount <span class="badge-source-tag primary" style="font-size: 8px; padding: 1px 4px;">Primary</span></div>
+                  <div class="stat-val" id="inspectHeadcount">536 / 1200</div>
+                </div>
+                <div class="mini-stat">
+                  <div class="stat-label">WiFi Probes <span class="badge-source-tag proxy" style="font-size: 8px; padding: 1px 4px;">Proxy</span></div>
+                  <div class="stat-val" id="inspectWifi">665 devices</div>
+                </div>
+                <div class="mini-stat">
+                  <div class="stat-label">Air Quality (CO2) <span class="badge-source-tag proxy" style="font-size: 8px; padding: 1px 4px;">Proxy</span></div>
+                  <div class="stat-val" id="inspectCo2">812 ppm</div>
+                </div>
+                <div class="mini-stat">
+                  <div class="stat-label">Energy Draw <span class="badge-source-tag proxy" style="font-size: 8px; padding: 1px 4px;">Proxy</span></div>
+                  <div class="stat-val" id="inspectEnergy">77.8 kWh</div>
+                </div>
+              </div>
+
+              <!-- Queue / Transit stat if applicable -->
+              <div class="mini-stat" id="inspectSpecialWrap" style="margin-bottom: 14px;">
+                <div class="stat-label" id="inspectSpecialLabel">Estimated Queue / Wait</div>
+                <div class="stat-val" id="inspectSpecialVal" style="color: var(--accent-cyan);">--</div>
+              </div>
+
+              <div style="display: flex; gap: 8px;">
+                <button class="btn-primary-action" id="btnSimulateZone" style="flex: 1; font-size: 12px; padding: 10px;">
+                  <i class="fa-solid fa-sliders"></i> Simulate Scenario Here
+                </button>
+              </div>
+            </div>
+
+            <!-- Campus Facilities Selector List -->
+            <div class="card-panel">
+              <div class="panel-toolbar" style="margin-bottom: 8px;">
+                <span class="panel-title" style="font-size: 13px;">
+                  <i class="fa-solid fa-list-check" style="color: var(--accent-cyan);"></i> Campus Zones Telemetry
+                </span>
+              </div>
+              <div class="zone-selector-list" id="zoneSelectorList">
+                <!-- Populated dynamically via JS -->
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- TAB 2: COMPUTER VISION & VIDEO AI WORKFLOW -->
+      <section class="tab-content" id="tab-vision">
+        <div class="methodology-banner">
+          <i class="fa-solid fa-video methodology-icon"></i>
+          <div class="methodology-content">
+            <h4>Edge Computer Vision & Multi-Object Pedestrian Tracking Pipeline</h4>
+            <p>
+              Optical detection workflow: High-speed frame extraction, <code>YOLOv8-Nano</code> object detection,
+              persistent <code>DeepSORT</code> centroid tracking, and virtual tripwire ROI crossing logic that converts raw optical pixel streams
+              into validated zone headcount and directional ingress/egress rates. Usable with synthetic CCTV corridor, live camera, or video file.
+            </p>
+          </div>
+        </div>
+
+        <div class="vision-view-layout">
+          <!-- Left: Camera Viewport & Controls -->
+          <div class="cctv-container-panel">
+            <div class="panel-toolbar">
+              <div class="panel-title">
+                <i class="fa-solid fa-camera" style="color: var(--accent-cyan);"></i>
+                CCTV Camera Feed & Optical Detection HUD
+              </div>
+              <div class="cctv-mode-selector">
+                <label class="radio-mode-label active" id="labelModeCctv">
+                  <input type="radio" name="visionSource" value="cctv_synthetic" checked>
+                  <i class="fa-solid fa-film"></i> Synthetic CCTV
+                </label>
+                <label class="radio-mode-label" id="labelModeWebcam">
+                  <input type="radio" name="visionSource" value="webcam">
+                  <i class="fa-solid fa-video"></i> Live Webcam
+                </label>
+                <label class="radio-mode-label" id="labelModeUpload">
+                  <input type="radio" name="visionSource" value="video_file">
+                  <i class="fa-solid fa-upload"></i> Upload Video
+                </label>
+                <input type="file" id="videoFileInput" accept="video/*" style="display: none;">
+              </div>
+            </div>
+
+            <!-- CCTV Canvas Viewport -->
+            <div class="cctv-viewport-wrapper">
+              <canvas id="cctvCanvas" width="800" height="480" role="img" aria-label="Computer vision pedestrian detection and tracking feed"></canvas>
+            </div>
+
+            <!-- Visual Sync Feedback Banner -->
+            <div id="visionSyncFeedback" class="sync-feedback-banner" style="display: none;"></div>
+
+            <!-- HUD Quick Stats -->
+            <div class="cctv-hud-grid">
+              <div class="cctv-hud-card">
+                <div class="hud-label">Ingress In (+1)</div>
+                <div class="hud-val" id="hudIngressCount" style="color: var(--accent-emerald);">42</div>
+              </div>
+              <div class="cctv-hud-card">
+                <div class="hud-label">Egress Out (-1)</div>
+                <div class="hud-val" id="hudEgressCount" style="color: var(--accent-amber);">18</div>
+              </div>
+              <div class="cctv-hud-card">
+                <div class="hud-label">Net Live Occupancy</div>
+                <div class="hud-val" id="hudNetOccupancy" style="color: var(--accent-cyan);">24</div>
+              </div>
+              <div class="cctv-hud-card">
+                <div class="hud-label">Active Track IDs</div>
+                <div class="hud-val" id="hudActiveTracks" style="color: var(--accent-purple);">7</div>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="display: flex; gap: 10px; margin-top: 4px;">
+              <button class="btn-primary-action" id="btnSyncVisionToZone" style="flex: 1; padding: 10px 14px; font-size: 13px;">
+                <i class="fa-solid fa-arrows-rotate"></i> Sync Camera Count to Central Library (LIB_01)
+              </button>
+              <button class="btn-toggle" id="btnResetVisionCounts" style="padding: 10px 14px; font-size: 13px;">
+                <i class="fa-solid fa-rotate-left"></i> Reset Counters
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: 5-Stage Architectural Workflow Card -->
+          <div class="cv-workflow-panel">
+            <div class="card-panel">
+              <div class="panel-toolbar" style="margin-bottom: 14px;">
+                <span class="panel-title" style="font-size: 14px;">
+                  <i class="fa-solid fa-diagram-project" style="color: var(--accent-cyan);"></i> Vision AI Pipeline: Pixels to Validated Zone Counts
+                </span>
+              </div>
+
+              <div class="cv-pipeline-steps">
+                <div class="cv-step-card">
+                  <div class="cv-step-num"><i class="fa-solid fa-video"></i></div>
+                  <div class="cv-step-body">
+                    <div class="cv-step-header">
+                      <h4>High-Speed Stream Ingestion</h4>
+                      <span class="cv-stage-tag">STAGE 01 // INGESTION</span>
+                    </div>
+                    <p>Optical RTSP video feed, local USB camera, or simulated corridor capture buffer sampled at 24.2 FPS with frame buffer normalization.</p>
+                  </div>
+                </div>
+
+                <div class="cv-flow-connector"><i class="fa-solid fa-chevron-down"></i></div>
+
+                <div class="cv-step-card">
+                  <div class="cv-step-num"><i class="fa-solid fa-crosshairs"></i></div>
+                  <div class="cv-step-body">
+                    <div class="cv-step-header">
+                      <h4>YOLOv8 Deep Neural Object Detection</h4>
+                      <span class="cv-stage-tag">STAGE 02 // INFERENCE</span>
+                    </div>
+                    <p>Single-stage convolutional inference targeting person class bounding boxes <code>[xmin, ymin, xmax, ymax]</code> with confidence score threshold &ge; 0.80 (80%).</p>
+                  </div>
+                </div>
+
+                <div class="cv-flow-connector"><i class="fa-solid fa-chevron-down"></i></div>
+
+                <div class="cv-step-card">
+                  <div class="cv-step-num"><i class="fa-solid fa-route"></i></div>
+                  <div class="cv-step-body">
+                    <div class="cv-step-header">
+                      <h4>DeepSORT Centroid & Trajectory Tracking</h4>
+                      <span class="cv-stage-tag">STAGE 03 // TRACKING</span>
+                    </div>
+                    <p>Kalman filter motion state estimation and cosine appearance distance association maintains persistent identities (e.g. <code>Track #104</code>) across occlusions.</p>
+                  </div>
+                </div>
+
+                <div class="cv-flow-connector"><i class="fa-solid fa-chevron-down"></i></div>
+
+                <div class="cv-step-card">
+                  <div class="cv-step-num"><i class="fa-solid fa-arrows-split-up-and-left"></i></div>
+                  <div class="cv-step-body">
+                    <div class="cv-step-header">
+                      <h4>Virtual Tripwire ROI Directional Logic</h4>
+                      <span class="cv-stage-tag">STAGE 04 // SPATIAL ROI</span>
+                    </div>
+                    <p>Calibrated geometric crossing vector registers direction: downward crossing increments Ingress (+1), upward crossing increments Egress (-1).</p>
+                  </div>
+                </div>
+
+                <div class="cv-flow-connector"><i class="fa-solid fa-chevron-down"></i></div>
+
+                <div class="cv-step-card">
+                  <div class="cv-step-num"><i class="fa-solid fa-network-wired"></i></div>
+                  <div class="cv-step-body">
+                    <div class="cv-step-header">
+                      <h4>Digital Twin Headcount Integration</h4>
+                      <span class="cv-stage-tag">STAGE 05 // TWIN SYNC</span>
+                    </div>
+                    <p>Net accumulated headcount (<code>Ingress &minus; Egress</code>) streams synchronously into <code>LIB_01</code>, driving spatial heatmaps and ML forecasts.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: PREDICTIVE ML FORECASTING -->
+      <section class="tab-content" id="tab-forecast">
+        <div class="methodology-banner">
+          <i class="fa-solid fa-circle-info methodology-icon"></i>
+          <div class="methodology-content">
+            <h4>Verifiable ML Forecast Methodology & Provenance</h4>
+            <p>
+              <strong>Historical Dataset:</strong> Trained on 90 consecutive academic days (N = 15,120 hourly records) across 7 facilities.
+              <br>
+              <strong>Forecast Horizon:</strong> Rolling 24 consecutive hours starting from selected simulated time (<code id="forecastHorizonLabel">13:00 Today → 12:00 Next Day</code>).
+              <br>
+              <strong>90% Confidence Bounds:</strong> Computed analytically as ŷ &plusmn; 1.645 &times; RMSE (&plusmn;4.9% error margin) derived from the test-set holdout Root Mean Squared Error.
+            </p>
+          </div>
+        </div>
+
+        <div class="forecast-layout">
+          
+          <!-- Primary 24-Hour Forecast Card -->
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div class="chart-card-title">
+                <h3><i class="fa-solid fa-chart-area" style="color: var(--accent-cyan); margin-right: 8px;"></i> 24-Hour Machine Learning Occupancy Forecast</h3>
+                <p>Ensemble Random Forest regression curve with 90% confidence bounds, test-holdout actuals, and automated bottleneck detection</p>
+              </div>
+              <div class="chart-controls-wrap" style="display: flex; gap: 12px; align-items: center;">
+                <label class="radio-mode-label" style="font-size: 11px; cursor: pointer;">
+                  <input type="checkbox" id="toggleValidationScatter" checked>
+                  <i class="fa-solid fa-bullseye" style="color: #f59e0b;"></i> Show Test Ground-Truth
+                </label>
+                <select class="select-custom" id="forecastZoneSelect" style="width: 240px;">
+                  <!-- Populated via JS -->
+                </select>
+              </div>
+            </div>
+            <div class="chart-container-inner">
+              <canvas id="forecastChartCanvas" role="img" aria-label="24-Hour ML Occupancy Forecast Chart">24-Hour Machine Learning Occupancy Forecast Chart</canvas>
+            </div>
+          </div>
+
+          <!-- Secondary Grid: Capacity Comparison & Energy Demand -->
+          <div class="forecast-grid-duo">
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <div class="chart-card-title">
+                  <h3><i class="fa-solid fa-chart-column" style="color: var(--accent-blue); margin-right: 8px;"></i> Facility Capacity vs Headcount Demand</h3>
+                  <p>Design limit vs Nominal Baseline vs Simulated What-If load</p>
+                </div>
+              </div>
+              <div class="chart-container-inner" style="height: 280px;">
+                <canvas id="capacityChartCanvas" role="img" aria-label="Facility Capacity vs Headcount Demand Chart">Facility Capacity vs Headcount Demand Chart</canvas>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <div class="chart-card-title">
+                  <h3><i class="fa-solid fa-bolt" style="color: var(--accent-emerald); margin-right: 8px;"></i> Campus Energy & HVAC Load Profile</h3>
+                  <p>Predicted hourly power draw (kWh) correlated with human thermal output and ambient weather</p>
+                </div>
+              </div>
+              <div class="chart-container-inner" style="height: 280px;">
+                <canvas id="energyChartCanvas" role="img" aria-label="Campus Energy and HVAC Power Draw Chart">Campus Energy and HVAC Power Draw Chart</canvas>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- TAB 4: WHAT-IF SCENARIO SIMULATOR -->
+      <section class="tab-content" id="tab-simulator">
+        <div class="simulator-layout">
+          
+          <!-- Left Controls Column -->
+          <div class="sim-controls-card">
+            <div class="panel-toolbar">
+              <span class="panel-title">
+                <i class="fa-solid fa-vial-virus" style="color: var(--accent-cyan);"></i> Scenario Parameter Controls
+              </span>
+            </div>
+
+            <!-- Preset Scenarios Pills -->
+            <label style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; display: block;">
+              Pre-Configured Administrative Scenarios
+            </label>
+            <div class="preset-pills-wrap">
+              <button class="pill-preset active" data-preset="baseline">Standard Baseline</button>
+              <button class="pill-preset" data-preset="hackathon">Hackathon (+1500)</button>
+              <button class="pill-preset" data-preset="exam_crunch">Final Exams Crunch</button>
+              <button class="pill-preset" data-preset="stagger_policy">Staggered Timetable</button>
+              <button class="pill-preset" data-preset="monsoon_downpour">Monsoon Downpour</button>
+              <button class="pill-preset" data-preset="growth_expansion">Growth (+25%)</button>
+            </div>
+
+            <!-- Event Size Slider -->
+            <div class="control-field">
+              <label>
+                <span>Extra Event Influx (Attendees)</span>
+                <span class="val-display" id="simValEvent">0 (No Event)</span>
+              </label>
+              <input type="range" class="slider-input" id="simSliderEvent" min="0" max="3000" step="100" value="0" aria-label="Extra Event Influx Attendees">
+            </div>
+
+            <!-- Target Facility Dropdown -->
+            <div class="control-field">
+              <label>Target Event Facility / Ground</label>
+              <select class="select-custom" id="simTargetZone" aria-label="Target Event Facility">
+                <!-- populated via JS -->
+              </select>
+            </div>
+
+            <!-- Exam Period Toggle -->
+            <div class="control-field">
+              <div class="toggle-switch-wrap">
+                <span>
+                  <i class="fa-solid fa-graduation-cap" style="color: var(--accent-cyan); margin-right: 6px;"></i> Final Examination Period:
+                  <span id="simExamStatusBadge" class="badge-status-inactive">Inactive</span>
+                </span>
+                <label class="switch">
+                  <input type="checkbox" id="simCheckExam" aria-label="Final Examination Period Active">
+                  <span class="slider-toggle"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Weather / Rain Slider -->
+            <div class="control-field">
+              <label>
+                <span>Adverse Weather / Rain Intensity</span>
+                <span class="val-display" id="simValRain">Clear (0%)</span>
+              </label>
+              <input type="range" class="slider-input" id="simSliderRain" min="0" max="1" step="0.1" value="0" aria-label="Adverse Weather Rain Intensity">
+            </div>
+
+            <!-- Timetable Staggering Policy Slider -->
+            <div class="control-field">
+              <label>
+                <span>Timetable Staggering Policy Factor</span>
+                <span class="val-display" id="simValStagger">0% (Unstaggered)</span>
+              </label>
+              <input type="range" class="slider-input" id="simSliderStagger" min="0" max="0.5" step="0.05" value="0" aria-label="Timetable Staggering Policy Factor">
+            </div>
+
+            <!-- Ambient Temperature Slider -->
+            <div class="control-field">
+              <label>
+                <span>Ambient Outside Temp (°C)</span>
+                <span class="val-display" id="simValTemp">26 °C</span>
+              </label>
+              <input type="range" class="slider-input" id="simSliderTemp" min="15" max="40" step="1" value="26" aria-label="Ambient Outside Temperature in Celsius">
+            </div>
+
+            <button class="btn-primary-action" id="btnRunSimulation">
+              <i class="fa-solid fa-bolt"></i> Recompute What-If Model
+            </button>
+            <button class="btn-toggle" id="btnApplySimToMap" style="width: 100%; margin-top: 8px; justify-content: center; padding: 10px;">
+              <i class="fa-solid fa-map"></i> View Simulated State on Digital Twin Map
+            </button>
+          </div>
+
+          <!-- Right Results & Recommendations Column -->
+          <div class="sim-results-column">
+            
+            <!-- Delta Summary Grid -->
+            <div class="delta-summary-grid">
+              <div class="delta-card info" id="cardDeltaPeak">
+                <div class="d-label">Peak Congestion</div>
+                <div class="d-val" id="deltaPeakVal">77.9%</div>
+                <div class="d-badge" id="deltaPeakBadge">Baseline Nominal</div>
+              </div>
+
+              <div class="delta-card" id="cardDeltaBottlenecks">
+                <div class="d-label">Severe Bottlenecks</div>
+                <div class="d-val" id="deltaBottlenecksVal">0</div>
+                <div class="d-badge">0 Severe Zones</div>
+              </div>
+
+              <div class="delta-card" id="cardDeltaEnergy">
+                <div class="d-label">Extra Energy Draw</div>
+                <div class="d-val" id="deltaEnergyVal">+0 kWh</div>
+                <div class="d-badge" id="deltaCarbonBadge">+0.0 kg CO2e</div>
+              </div>
+
+              <div class="delta-card" id="cardDeltaWait">
+                <div class="d-label">Max Transit Delay</div>
+                <div class="d-val" id="deltaWaitVal">4.8 min</div>
+                <div class="d-badge">Normal Headway</div>
+              </div>
+            </div>
+
+            <!-- AI Operational Dispatch Directives -->
+            <div class="ai-dispatch-box">
+              <div class="dispatch-header">
+                <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent-cyan); font-size: 16px;"></i>
+                <h3>AI Administrative Dispatch Directives & Mitigation Actions</h3>
+              </div>
+              <div class="rec-list" id="dispatchRecList">
+                <!-- Dynamically populated via JS -->
+              </div>
+            </div>
+
+            <!-- Side-by-Side Facility Comparison Table -->
+            <div class="data-table-wrap">
+              <table class="modern-table" id="simTable">
+                <thead>
+                  <tr>
+                    <th>Facility</th>
+                    <th>Nominal Cap</th>
+                    <th>Baseline Occupancy</th>
+                    <th>Simulated Occupancy</th>
+                    <th>Crowd Delta</th>
+                    <th>Transit / Queue</th>
+                    <th>Status Severity</th>
+                  </tr>
+                </thead>
+                <tbody id="simTableBody">
+                  <!-- Populated via JS -->
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- TAB 5: FACILITIES & ENERGY TELEMETRY -->
+      <section class="tab-content" id="tab-facilities">
+        <div class="methodology-banner">
+          <i class="fa-solid fa-bolt methodology-icon"></i>
+          <div class="methodology-content">
+            <h4>Facilities Telemetry & Derived Physical Proxy Metrics</h4>
+            <p>
+              <strong>Headcount & Occupancy:</strong> Primary ground-truth physical metric measured across all facilities.
+              <br>
+              <strong>Energy, CO2, and Wi-Fi Probes:</strong> Secondary physical proxies modeled from occupant metabolic emissions
+              (100W sensible thermal heat, 0.005 L/s CO2 per person in ASHRAE 62.1 spaces) and 1.24x device-to-person probe ratios.
+            </p>
+          </div>
+        </div>
+        <div class="facilities-grid" id="facilitiesGridCards">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </section>
+
+      <!-- TAB 6: ML MODEL DIAGNOSTICS & EXPLAINABILITY -->
+      <section class="tab-content" id="tab-diagnostics">
+        <div class="methodology-banner">
+          <i class="fa-solid fa-database methodology-icon"></i>
+          <div class="methodology-content">
+            <h4>Dataset Provenance & Temporal Holdout Split Methodology</h4>
+            <p>
+              <strong>Dataset Size:</strong> 15,120 records (90 calendar days &times; 24 hourly intervals &times; 7 campus facility zones).
+              <br>
+              <strong>Chronological Split:</strong> Days 1–72 (80%, N = 12,096) strictly for training; Days 73–90 (20%, N = 3,024) held out as strictly future unseen test data.
+              <br>
+              <strong>Zero Cross-Period Data Leakage:</strong> Random cross-validation is barred for time-series telemetry because random shuffling leaks same-day future hours into training. The chronological holdout guarantees evaluation on unseen future temporal horizons.
+            </p>
+          </div>
+        </div>
+
+        <div class="chart-card" style="margin-bottom: 20px;">
+          <div class="chart-card-header">
+            <div class="chart-card-title">
+              <h3><i class="fa-solid fa-trophy" style="color: var(--accent-amber); margin-right: 8px;"></i> Machine Learning Model Architecture & Performance Benchmarks</h3>
+              <p>Evaluation metrics on 15,120 historical operational records across 7 campus facilities (80/20 chronological train-test split)</p>
+            </div>
+          </div>
+          <div class="data-table-wrap">
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th>Model Algorithm</th>
+                  <th>Task</th>
+                  <th>RMSE (Root Mean Sq Err)</th>
+                  <th>MAE (Mean Abs Err)</th>
+                  <th>R² Score (Variance Explained)</th>
+                  <th>Selection Status</th>
+                </tr>
+              </thead>
+              <tbody id="mlBenchmarksBody">
+                <!-- Populated via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="diagnostics-grid">
+          <!-- Feature Importance Chart -->
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div class="chart-card-title">
+                <h3><i class="fa-solid fa-ranking-star" style="color: var(--accent-cyan); margin-right: 8px;"></i> Random Forest Feature Importance</h3>
+                <p>Gini impurity reduction across operational parameters</p>
+              </div>
+            </div>
+            <div class="chart-container-inner" style="height: 300px;">
+              <canvas id="importanceChartCanvas" role="img" aria-label="Random Forest Feature Importance Chart">Random Forest Feature Importance Chart</canvas>
+            </div>
+          </div>
+
+          <!-- Test Holdout Validation Curve -->
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div class="chart-card-title">
+                <h3><i class="fa-solid fa-bullseye" style="color: var(--accent-emerald); margin-right: 8px;"></i> Model Validation: Actual vs Predicted Occupancy</h3>
+                <p>Comparison on unseen chronological test holdout samples</p>
+              </div>
+            </div>
+            <div class="chart-container-inner" style="height: 300px;">
+              <canvas id="validationChartCanvas" role="img" aria-label="Model Validation Actual vs Predicted Occupancy Chart">Model Validation: Actual vs Predicted Occupancy Chart</canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Confusion Matrix Visual Heatmap -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div class="chart-card-title">
+              <h3><i class="fa-solid fa-table-cells-large" style="color: var(--accent-purple); margin-right: 8px;"></i> Congestion Risk Classifier: Confusion Matrix</h3>
+              <p>Classification Accuracy: 93.62% | Weighted F1-Score: 0.9323 across 4 operational severity states (Chronological Test Holdout)</p>
+            </div>
+          </div>
+          <table class="confusion-matrix-table" id="confusionMatrixTable">
+            <thead>
+              <tr>
+                <th>True \ Predicted</th>
+                <th>Low (&lt;45%)</th>
+                <th>Moderate (45-70%)</th>
+                <th>High (70-85%)</th>
+                <th>Severe Bottleneck (&gt;85%)</th>
+              </tr>
+            </thead>
+            <tbody id="confusionMatrixBody">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- Application Scripts -->
+  <script src="campus_map.js"></script>
+  <script src="simulator.js"></script>
+  <script src="charts.js"></script>
+  <script src="cv_pipeline.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

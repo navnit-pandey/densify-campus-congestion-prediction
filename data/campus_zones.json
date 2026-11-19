@@ -1,0 +1,65 @@
+[
+  {
+    "id": "LIB_01",
+    "name": "Central Library",
+    "category": "Library",
+    "capacity": 1200,
+    "base_energy_kwh": 35.0,
+    "energy_per_person": 0.08,
+    "description": "Multi-floor research library with digital stacks, reading halls, and study pods."
+  },
+  {
+    "id": "BLK_A",
+    "name": "Academic Block A (Engineering & Tech)",
+    "category": "Classrooms",
+    "capacity": 2400,
+    "base_energy_kwh": 70.0,
+    "energy_per_person": 0.06,
+    "description": "Smart lecture theaters (L101-L108), computing labs, and faculty suites."
+  },
+  {
+    "id": "BLK_B",
+    "name": "Academic Block B (Sciences & Management)",
+    "category": "Classrooms",
+    "capacity": 1800,
+    "base_energy_kwh": 55.0,
+    "energy_per_person": 0.06,
+    "description": "Tiered seminar halls, wet labs, and departmental lounges."
+  },
+  {
+    "id": "SAC_01",
+    "name": "Student Activity Center (SAC)",
+    "category": "Facilities",
+    "capacity": 850,
+    "base_energy_kwh": 30.0,
+    "energy_per_person": 0.09,
+    "description": "Indoor sports pavilion, dance studios, club rooms, and auditorium."
+  },
+  {
+    "id": "CAN_01",
+    "name": "North Food Court & Canteen",
+    "category": "Food Services",
+    "capacity": 700,
+    "base_energy_kwh": 40.0,
+    "energy_per_person": 0.12,
+    "description": "Multi-vendor cafeteria with dining terrace and rapid-service counters."
+  },
+  {
+    "id": "CAN_02",
+    "name": "South Cafe & Garden Bistro",
+    "category": "Food Services",
+    "capacity": 400,
+    "base_energy_kwh": 20.0,
+    "energy_per_person": 0.1,
+    "description": "Artisan bakery, coffee bar, and shaded outdoor dining deck."
+  },
+  {
+    "id": "TRN_01",
+    "name": "East Transit & Shuttle Hub",
+    "category": "Transportation",
+    "capacity": 650,
+    "base_energy_kwh": 15.0,
+    "energy_per_person": 0.03,
+    "description": "Central electric shuttle terminus, bus bays 1-4, and metro link access."
+  }
+]
