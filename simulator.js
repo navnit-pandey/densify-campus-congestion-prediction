@@ -1,5 +1,5 @@
 /**
- * AETHER CAMPUS DIGITAL TWIN - WHAT-IF SCENARIO SIMULATION ENGINE
+ * DENSIFY CAMPUS DIGITAL TWIN - WHAT-IF SCENARIO SIMULATION ENGINE
  * Client-side ML scenario modeling, delta metric calculation,
  * and AI Administrative Dispatch Directives.
  */

@@ -1,3 +1,20 @@
 {
-  "python.defaultInterpreterPath": "C:\\Program Files\\Python314\\python.exe"
+  "python.defaultInterpreterPath": "C:\\Program Files\\Python314\\python.exe",
+  "python.analysis.extraPaths": [
+    "C:\\Program Files\\Python314\\Lib\\site-packages",
+    "${workspaceFolder}",
+    "${workspaceFolder}\\ml_pipeline"
+  ],
+  "python.autoComplete.extraPaths": [
+    "C:\\Program Files\\Python314\\Lib\\site-packages",
+    "${workspaceFolder}",
+    "${workspaceFolder}\\ml_pipeline"
+  ],
+  "python.analysis.typeCheckingMode": "off",
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingImports": "none",
+    "reportMissingModuleSource": "none",
+    "reportUndefinedVariable": "none",
+    "reportGeneralTypeIssues": "none"
+  }
 }

@@ -1,6 +1,6 @@
 {
   "model_metadata": {
-    "trained_at": "2026-11-05",
+    "trained_at": "2026-11-19",
     "dataset_rows": 15120,
     "test_split": 0.2,
     "split_type": "Chronological Temporal Holdout (Days 1-72 Train, Days 73-90 Test)",

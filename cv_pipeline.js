@@ -1,5 +1,5 @@
 /**
- * AETHER CAMPUS DIGITAL TWIN - COMPUTER VISION & CAMERA AI PIPELINE
+ * DENSIFY CAMPUS DIGITAL TWIN - COMPUTER VISION & CAMERA AI PIPELINE
  * Provides interactive camera stream testing (Simulated CCTV, Live Webcam, or Video file),
  * real-time pedestrian bounding box detection, DeepSORT-style persistent ID tracking,
  * and virtual tripwire ROI bidirectional ingress/egress counting.

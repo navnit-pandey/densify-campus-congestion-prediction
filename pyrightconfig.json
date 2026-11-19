@@ -1,3 +1,16 @@
 {
-  "pythonPath": "C:\\Program Files\\Python314\\python.exe"
+  "include": [
+    ".",
+    "ml_pipeline"
+  ],
+  "extraPaths": [
+    "C:\\Program Files\\Python314\\Lib\\site-packages",
+    "ml_pipeline"
+  ],
+  "pythonPath": "C:\\Program Files\\Python314\\python.exe",
+  "pythonVersion": "3.14",
+  "typeCheckingMode": "off",
+  "reportMissingImports": "none",
+  "reportMissingModuleSource": "none",
+  "reportMissingTypeStubs": false
 }

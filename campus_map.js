@@ -1,5 +1,5 @@
 /**
- * AETHER CAMPUS DIGITAL TWIN - CANVAS MAP & HEATMAP ENGINE
+ * DENSIFY CAMPUS DIGITAL TWIN - CANVAS MAP & HEATMAP ENGINE
  * Renders architectural campus blueprint, real-time radial density heatmaps,
  * and animated pedestrian foot-traffic particle systems.
  */

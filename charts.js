@@ -1,5 +1,5 @@
 /**
- * AETHER CAMPUS DIGITAL TWIN - CHARTS & VISUALIZATION ENGINE
+ * DENSIFY CAMPUS DIGITAL TWIN - CHARTS & VISUALIZATION ENGINE
  * Powered by Chart.js with custom dark glassmorphism palettes and glow styling.
  */
 

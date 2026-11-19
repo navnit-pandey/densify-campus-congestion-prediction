@@ -16,12 +16,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
 
-logger = logging.getLogger("aether_api")
+logger = logging.getLogger("densify_api")
 logging.basicConfig(level=logging.INFO)
 
 app = FastAPI(
-    title="Campus Crowd Density & Congestion Prediction API",
-    description="AETHER Digital Twin API for real-time telemetry, 24h ML forecasts, and What-If scenario simulations.",
+    title="Densify - Campus Crowd Density & Congestion Prediction API",
+    description="Densify Digital Twin API for real-time telemetry, 24h ML forecasts, and What-If scenario simulations.",
     version="1.0.0"
 )
 
@@ -106,7 +106,7 @@ class WhatIfRequest(BaseModel):
 def health_check():
     return {
         "status": "healthy",
-        "service": "AETHER Campus Digital Twin Engine",
+        "service": "Densify Campus Digital Twin Engine",
         "models_loaded": {
             "density_regressor": rf_density is not None,
             "energy_regressor": rf_energy is not None,

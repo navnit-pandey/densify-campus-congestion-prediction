@@ -1,5 +1,5 @@
 /**
- * AETHER CAMPUS DIGITAL TWIN - MAIN APPLICATION CONTROLLER
+ * DENSIFY CAMPUS DIGITAL TWIN - MAIN APPLICATION CONTROLLER
  * Coordinates UI tabs, real-time clock, data orchestration,
  * map engine, what-if simulator, and visualization charts.
  */
@@ -28,7 +28,7 @@ class CampusTwinApp {
   }
 
   async init() {
-    console.log("Initializing AETHER Campus Digital Twin Engine...");
+    console.log("Initializing Densify Campus Digital Twin Engine...");
     await this.loadData();
     this.simulatorEngine = new WhatIfSimulationEngine(this.zones, this.artifacts, this.profiles);
     this.initMap();
@@ -42,7 +42,7 @@ class CampusTwinApp {
     // Trigger initial state
     this.updateClockDisplay();
     this.refreshCurrentConditions();
-    console.log("AETHER Engine Ready.");
+    console.log("Densify Engine Ready.");
   }
 
   async loadData() {

@@ -1,4 +1,4 @@
-# AETHER Campus Crowd Density & Congestion Prediction System
+# Densify Campus Crowd Density & Congestion Prediction System
 ### *Data-Driven Digital Twin & Machine Learning Operations Platform for University Facilities*
 **Version**: 1.0.0 (Production-Ready)  
 **Live Interactive Demo**: [https://navnit-pandey.github.io/aether-campus-digital-twin/](https://navnit-pandey.github.io/aether-campus-digital-twin/)
@@ -6,14 +6,14 @@
 ---
 
 ## 🌟 Executive Overview
-**AETHER** is a comprehensive, data-driven digital twin platform developed to monitor, predict, and optimize campus-wide student crowd density, facility congestion, transit wait times, and building energy consumption across university operations.
+**Densify** is a comprehensive, data-driven digital twin platform developed to monitor, predict, and optimize campus-wide student crowd density, facility congestion, transit wait times, and building energy consumption across university operations.
 
-By fusing 90 days of high-fidelity synthetic IoT operational telemetry (15,120 sensor records) with ensemble machine learning models (**Random Forest Regressor**, **Gradient Boosting**, and **Congestion Risk Classifiers**), AETHER empowers campus administrators to visualize live conditions and execute interactive **"What-If" scenario simulations**—evaluating the systemic impacts of large campus fests, examination periods, timetable rescheduling, and extreme weather emergencies before committing physical resources.
+By fusing 90 days of high-fidelity synthetic IoT operational telemetry (15,120 sensor records) with ensemble machine learning models (**Random Forest Regressor**, **Gradient Boosting**, and **Congestion Risk Classifiers**), Densify empowers campus administrators to visualize live conditions and execute interactive **"What-If" scenario simulations**—evaluating the systemic impacts of large campus fests, examination periods, timetable rescheduling, and extreme weather emergencies before committing physical resources.
 
 ---
 
 ## 🏛️ Modeled Campus Facilities & Operational Telemetry
-AETHER models seven critical facility zones, tracking human occupancy, environmental air quality, power load, and service queue latencies (Total Campus Design Capacity: **8,000**):
+Densify models seven critical facility zones, tracking human occupancy, environmental air quality, power load, and service queue latencies (Total Campus Design Capacity: **8,000**):
 
 | Facility Code | Zone Name | Category | Design Capacity | Primary Telemetry Sources | Metric Scope |
 |---|---|---|---|---|---|
@@ -31,7 +31,7 @@ AETHER models seven critical facility zones, tracking human occupancy, environme
 ---
 
 ## 📷 Edge Computer Vision & Optical Headcount Pipeline (`cv_pipeline.js`)
-To bridge raw physical optical streams into verified Digital Twin headcounts, AETHER provides a fully interactive Computer Vision pipeline:
+To bridge raw physical optical streams into verified Digital Twin headcounts, Densify provides a fully interactive Computer Vision pipeline:
 1. **Multi-Input Stream Acquisition**: Supports Synthetic Corridor CCTV (24.2 FPS), Live User Webcam (`getUserMedia`), or Custom Video File Upload.
 2. **YOLOv8 Deep Neural Object Detection**: Detects person class bounding boxes with real-time confidence scores ($\ge 0.80$).
 3. **DeepSORT Centroid & Trajectory Tracking**: Associates detections across consecutive frames via Kalman filter motion estimation and Hungarian matching, assigning persistent track IDs (e.g. `Person #104`).
@@ -99,7 +99,7 @@ The Random Forest model identified the primary predictive drivers of university 
 
 ## 🎛️ "What-If" Analysis Engine & Automated Dispatch
 
-AETHER includes an interactive scenario sandbox allowing administrators to evaluate policy and event impacts before execution:
+Densify includes an interactive scenario sandbox allowing administrators to evaluate policy and event impacts before execution:
 
 ### 1. Preset Scenarios Evaluated
 - **Scenario A: Tech Fest & Hackathon (+1,500 Attendees)**
