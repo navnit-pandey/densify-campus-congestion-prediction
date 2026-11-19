@@ -1,4 +1,4 @@
-# Densify Campus Crowd Density & Congestion Prediction System
+# Densify Campus Congestion Prediction System
 ### *Data-Driven Digital Twin & Machine Learning Operations Platform for University Facilities*
 **Version**: 1.0.0 (Production-Ready)  
 **Live Interactive Demo**: [https://navnit-pandey.github.io/aether-campus-digital-twin/](https://navnit-pandey.github.io/aether-campus-digital-twin/)
